@@ -1,6 +1,7 @@
 import itertools
 import os
-import json
+import time as tm
+
 
 
 from matplotlib.backends.backend_pdf import PdfPages
@@ -34,7 +35,6 @@ labels = np.eye(number_output)[labels]
 epochs = PH.convert_to_correct_type("EPOCHS")
 number_of_experiences = PH.convert_to_correct_type("NUMBER_OF_SAMPLES")
 
-my_session = tf.compat.v1.Session()
 
 
 
@@ -43,27 +43,23 @@ class NetworkModel(keras.Sequential):
     def __init__(self, input_shape, output_size):
         super(NetworkModel, self).__init__()
         self.add(keras.Input(shape=input_shape))
-        # self.add(keras.layers.Dense(units=250, activation="relu"))
-        # self.add(keras.layers.Dense(units=125, activation="relu"))
-        self.add(keras.layers.Dense(256, activation="relu"))
-        self.add(keras.layers.Dense(128, activation="relu"))
-        self.add(keras.layers.Dense(64, activation="relu"))
+        self.add(keras.layers.Dense(units=256, activation="relu"))
+        self.add(keras.layers.Dense(units=128, activation="relu"))
         self.add(keras.layers.Dense(units=output_size, activation="softmax"))
 
 
-np.random.seed(0)
 
 train_index = tf.compat.v1.placeholder(tf.int32, shape=[None])
 test_index = tf.compat.v1.placeholder(tf.int32, shape=[None])
-prameter_lambda = tf.compat.v1.placeholder(tf.float32, shape=())
+parameter_lambda = tf.compat.v1.placeholder(tf.float32, shape=())
 learning_rate = tf.compat.v1.placeholder(tf.float32, shape=())
 
 
 def get_loss(y_true, y_pred, index_input, type_generator):
-    global prameter_lambda
+    global parameter_lambda
     index_input = tf.cast(index_input, tf.int64)
     Generator = Gen.Gcreate.getGen(type_generator)
-    t = Generator(p=prameter_lambda)
+    t = Generator(p=parameter_lambda)
     fo = Gen.FuzzyOperator(t, type_generator)
     kb = Gen.KnowledgeBase()
 
@@ -103,12 +99,13 @@ def train(s, p, lr, type_generator):
     train_operation = tf.compat.v1.train.AdamOptimizer(learning_rate).minimize(loss)
 
     tf.compat.v1.set_random_seed(0)
-    np.random.seed(0)
+    my_session = tf.compat.v1.Session()
     my_session.run(tf.compat.v1.global_variables_initializer())
+
 
     val_test_acc = []
     val_train_acc = []
-    dictionary = {prameter_lambda: p, learning_rate: lr, train_index: data_tr_index, test_index: data_te_index}
+    dictionary = {parameter_lambda: p, learning_rate: lr, train_index: data_tr_index, test_index: data_te_index}
     for element in range(epochs):
         my_session.run(train_operation, feed_dict=dictionary)
         train_accuracy, test_accuracy = my_session.run((tr_accuracy, te_accuracy), feed_dict=dictionary)
@@ -155,7 +152,6 @@ def main():
     list_Acal = []
     type_generator_index = 0
     for type_generators in product(type_generator_list):
-
         type_generator = type_generators[0]
         if type_generator == Gen.Yager :
             parameter_list = parameter_list_yager
@@ -295,5 +291,7 @@ def main():
 
 
 if __name__ == "__main__":
-
+    start_time = tm.time()
     main()
+    time_final=tm.time() - start_time
+    print(f"Time Final : {time_final} secend || {time_final/60} min")
