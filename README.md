@@ -3,7 +3,7 @@
 ## **Project Overview**
 
 This project  merges between logical reasoning
-and deep learning by using only the t-norm generator to convert any prior knowledge expressed by first-order logic formulas into loss functions optimized
+and deep learning by using only the t-norm generator to convert prior knowledge expressed by first-order logic formulas into loss functions optimized
 in TensorFlow..
 ## **Citeseer Experiments**
 See the project for the supervised CiteSeer experiments. The CiteSeer data can be found in ``` datasets ``` folder.
