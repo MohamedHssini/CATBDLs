@@ -43,8 +43,8 @@ class NetworkModel(keras.Sequential):
     def __init__(self, input_shape, output_size):
         super(NetworkModel, self).__init__()
         self.add(keras.Input(shape=input_shape))
-        self.add(keras.layers.Dense(units=256, activation="relu"))
-        self.add(keras.layers.Dense(units=128, activation="relu"))
+        self.add(keras.layers.Dense(units=150, activation="relu"))
+        self.add(keras.layers.Dense(units=100, activation="relu"))
         self.add(keras.layers.Dense(units=output_size, activation="softmax"))
 
 
